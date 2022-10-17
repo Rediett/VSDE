@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
+    <title>Document</title>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
+        import { getDatabase, ref, set, child, get } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmSUEwDiZwic2WZdiidlsh5CSNuVliNMU",
+            authDomain: "necxvsde.firebaseapp.com",
+            projectId: "necxvsde",
+            storageBucket: "necxvsde.appspot.com",
+            messagingSenderId: "154024834892",
+            appId: "1:154024834892:web:ca0220c70ca66bbc5a81e9",
+            databaseURL: "https://necxvsde-default-rtdb.firebaseio.com",
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        var servs = [];
+        function creatcard(title){
+            // <div class="p-3 mnuitem">Cust9om column padding</div>
+            var it = document.createElement('div');
+            it.innerHTML = title;
+            it.classList.add("p-3");
+            it.classList.add("mnuitem");
+            document.getElementById("menu").appendChild(it);
+        }
+
+        const dbRef = ref(database);
+        get(child(dbRef, 'Services/')).then((snapshot) => {
+        if (snapshot.exists()) {
+            var data = snapshot.val();
+            for(var v in data){
+                creatcard(v);
+                console.log(v);
+                servs.push(v);
+            }
+            console.log(data);
+        } else {
+            console.log("No data available");
+        }
+        }).catch((error) => {
+        console.error(error);
+        });
+
+        function writeUserData(title,discription,summary,media) {
+            const db = getDatabase(app);
+            set(ref(db, '/Services/' + title), {
+                Title: title,
+                Discription: discription,
+                Summary: summary,
+                Media : media
+            });
+        }
+
+
+        document.getElementById("upload").addEventListener("click",function(){
+            var ti = document.getElementById("title");
+            var sumDes = document.getElementById("descriptionSumm");
+            var des = document.getElementById("description");
+            var vid = document.getElementById("video");
+            console.log(servs);
+            console.log((ti.value));
+            console.log(!servs.includes(ti.value));
+            if(!servs.includes(ti.value)){
+                if(ti.value != ""){
+                    writeUserData(ti.value,sumDes.value,des.value,"https://firebasestorage.googleapis.com/v0/b/necxvsde.appspot.com/o/200717-LoopComingSoonBlueNeonSpace.mp4?alt=media&token=bdece65f-9b51-4168-9342-8aa90a68e26a")
+                    window.location.reload();
+                }
+            }else{
+                alert("Service is alrady in the database.");
+                console.log(!servs.includes(ti.value));
+            }
+            
+        });
+
+    </script>
+    
+    <style>
+        html, body{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            padding-bottom: 100px;
+        }
+        .menu{
+            background-color:rgb(222, 251, 244);
+            height: 100%;
+        }
+        .form{
+            background-color: rgb(190, 241, 229);
+            height: 100%;
+        }
+        .mnuitem{
+            /* background-color: bisque; */
+        }
+    </style>
+</head>
+<body>
+    <div class="jumbotron text-center">
+        <br>
+        <h1>NECX VSDE<span style="color: brown; font-size:large;">V<span style="font-size: medium;">1</span> </span></h1>
+        <br>
+    </div>
+    <div class="container px ">
+        <div class="row gx">
+            <div class="col-3 text-center menu " id="menu">
+                <div class="p-3"><h2 class="card-title">Services</h2></div>
+                <hr>
+            </div>
+            <div class="col form">
+                <div class="p-3 text-center"><h2 class="card-title">Form</h2></div>
+                <hr>
+                <div class="p-3">
+                    <h4>Title</h4>
+                    <input class="form-control" type="text" name="title" id="title" required>
+                    <!-- <textarea name="description" id="description" class="form-control" rows="6" required="required"></textarea> -->
+                </div>
+                <div class="p-3">
+                    <h4>Description summary</h4>
+                    <textarea name="description" id="descriptionSumm" class="form-control" rows="6" required="required"></textarea>
+                </div>
+                <div class="p-3">
+                    <h4>Description</h4>
+                    <textarea name="description" id="description" class="form-control" rows="6" required="required"></textarea>
+                </div>
+
+                <div class="p-3 ">
+                    <h4>Video</h4>
+                    <input type="file" name="video" id="video" disabled>
+                </div>
+                <div class="p-3">
+                    <input class="form-control" id="upload" type="button" value="Upload" style="background-color: rgb(175, 243, 175);">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <br>
+        <br>
+        <div class="p-3 text-center">
+                    <h6>BY NECX Holding Inc.</h6>
+                </div>
+    </footer>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</body>
+</html>
